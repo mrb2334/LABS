@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulation Lab – interactive engineering &amp; physics simulations</title>
+<meta name="description" content="Interactive engineering and physics simulations that run in your browser. For educational purposes only – not for production scenarios.">
+<style>
+:root{--bg:#060e13;--bg2:#0b1a21;--panel:#102129;--line:#27434f;--ink:#e4f0f2;--dim:#8fa9b0;--teal:#36c2b4;--amber:#f0b429;--violet:#8f7cf2;--red:#e5484d;--glow:rgba(54,194,180,.35);--card:rgba(16,33,41,.72);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eaf2f3;--bg2:#dbe8ea;--panel:#fff;--line:#bcd0d4;--ink:#10252d;--dim:#4d6c75;--teal:#0f8a7e;--amber:#a86f00;--violet:#6a55d8;--red:#c9302f;--glow:rgba(15,138,126,.28);--card:rgba(255,255,255,.78);color-scheme:light}}
+:root[data-theme="light"]{--bg:#eaf2f3;--bg2:#dbe8ea;--panel:#fff;--line:#bcd0d4;--ink:#10252d;--dim:#4d6c75;--teal:#0f8a7e;--amber:#a86f00;--violet:#6a55d8;--red:#c9302f;--glow:rgba(15,138,126,.28);--card:rgba(255,255,255,.78);color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0)}
+a{color:inherit}
+.wrap{width:min(1180px,100% - 32px);margin:0 auto}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:6px}
+/* nav */
+nav{position:fixed;inset:0 0 auto 0;z-index:20;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;text-decoration:none}
+.logo svg{width:28px;height:28px}
+nav .links{margin-left:auto;display:flex;gap:6px;align-items:center}
+nav .links a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--dim);font-size:14px}
+nav .links a:hover{color:var(--ink);background:color-mix(in srgb,var(--teal) 14%,transparent)}
+.ib{background:none;border:1px solid var(--line);color:var(--ink);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.ib:hover{border-color:var(--teal);color:var(--teal)}
+@media (max-width:640px){nav .links a:not(.keep){display:none}}
+/* hero */
+header.hero{position:relative;min-height:100svh;display:grid;align-items:center;padding:100px 0 70px;overflow:hidden;isolation:isolate}
+#bg{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 20% 30%,transparent 0,var(--bg) 78%),linear-gradient(180deg,transparent 60%,var(--bg))}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--dim);background:color-mix(in srgb,var(--panel) 70%,transparent)}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 var(--glow);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+h1{font-size:clamp(2.3rem,6.2vw,4.9rem);line-height:1.04;margin:22px 0 18px;letter-spacing:-.02em;max-width:15ch}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--teal),var(--amber) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;animation:shift 9s ease-in-out infinite alternate}
+@keyframes shift{to{background-position:100% 0}}
+.lead{font-size:clamp(1.05rem,2vw,1.3rem);color:var(--dim);max-width:56ch;margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:12px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 75%,transparent);cursor:pointer;font-size:15px;transition:transform .15s,border-color .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--teal)}
+.btn.pri{background:linear-gradient(110deg,var(--teal),#2a9fd6);color:#04141a;border-color:transparent;box-shadow:0 8px 30px -8px var(--glow)}
+.btn.pri:hover{box-shadow:0 12px 36px -6px var(--glow)}
+.btn svg{width:18px;height:18px}
+.stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:54px}
+.stats div{min-width:110px}.stats b{display:block;font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums}.stats span{color:var(--dim);font-size:13px}
+.hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:var(--dim);font-size:12px;letter-spacing:.14em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:6px}
+.hint::after{content:"";width:1px;height:26px;background:linear-gradient(var(--teal),transparent);animation:drop 1.8s infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+/* sections */
+section{padding:90px 0;position:relative}
+.sh{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:34px}
+h2{font-size:clamp(1.7rem,3.6vw,2.6rem);margin:0;letter-spacing:-.01em}
+.sub{color:var(--dim);margin:8px 0 0;max-width:60ch}
+.chips{display:flex;gap:8px}
+.chip{padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--dim);cursor:pointer;font:inherit;font-size:14px}
+.chip[aria-pressed=true]{color:var(--ink);border-color:var(--teal);background:color-mix(in srgb,var(--teal) 16%,transparent)}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
+.card{position:relative;border-radius:20px;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(8px);padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:330px;transform-style:preserve-3d;transition:transform .2s ease-out,border-color .25s,box-shadow .25s,opacity .5s;text-decoration:none;--mx:50%;--my:0%}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx) var(--my),var(--glow),transparent 55%);opacity:0;transition:opacity .25s;pointer-events:none}
+.card.live:hover,.card.live:focus-visible{border-color:var(--teal);box-shadow:0 24px 60px -24px var(--glow)}.card.live:hover::before,.card.live:focus-visible::before{opacity:1}
+.card.live.big{grid-column:span 2}
+@media (max-width:760px){.card.live.big{grid-column:auto}}
+.viz{height:150px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 70%,transparent),transparent);position:relative}
+.viz canvas{width:100%;height:100%;display:block}
+.body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.tag{align-self:flex-start;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid}
+.live .tag{color:var(--teal);border-color:var(--teal)}
+.card h3{margin:0;font-size:1.3rem}
+.card p{margin:0;color:var(--dim);font-size:14.5px}
+.mods{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}.mods span{font-size:12px;padding:3px 9px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,transparent);color:var(--ink)}
+.go{margin-top:auto;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--teal);padding-top:8px}
+.go svg{width:18px;height:18px;transition:transform .2s}.card.live:hover .go svg{transform:translate(4px,-4px)}
+/* grey (coming soon) */
+.card.soon{filter:grayscale(1);opacity:.55;border-style:dashed;cursor:not-allowed;background:color-mix(in srgb,var(--panel) 35%,transparent)}
+.card.soon:hover{opacity:.75}
+.card.soon>.viz,.card.soon>.body{filter:blur(5px);transition:filter .3s;user-select:none}
+.card.soon:hover>.viz,.card.soon:hover>.body{filter:blur(3px)}
+.card.soon:not(.add)::after{content:"Coming soon";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 80%,transparent);color:var(--ink);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;pointer-events:none;z-index:2}
+.card.add>*{filter:blur(2px)}
+.soon .viz{display:grid;place-items:center;color:var(--dim)}
+.soon .viz svg{width:44px;height:44px;opacity:.7}
+.soon .viz::after{content:"";position:absolute;left:18px;right:18px;top:50%;border-top:2px dotted var(--line);opacity:.5;z-index:0}
+.soon .viz svg{position:relative;z-index:1;background:var(--bg);padding:8px;border-radius:50%;box-sizing:content-box}
+.soon .tag{color:var(--dim);border-color:var(--line)}
+.add{border-style:dashed;align-items:center;justify-content:center;text-align:center;color:var(--dim);padding:30px;gap:8px}.add b{font-size:2.4rem;line-height:1;color:var(--line)}
+.hide{display:none!important}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+.card.soon.rv.in{opacity:.55}
+.card.rv{transition:transform .2s ease-out,opacity .7s,border-color .25s,box-shadow .25s}
+/* features */
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.f{padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.f svg{width:32px;height:32px;color:var(--teal);margin-bottom:10px}.f h3{margin:0 0 6px}.f p{margin:0;color:var(--dim);font-size:14.5px}
+/* disclaimer */
+#legal{background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg2) 80%,transparent))}
+.dis{border:1px solid transparent;border-radius:22px;padding:2px;background:linear-gradient(120deg,var(--amber),transparent 40%,var(--teal)) border-box;-webkit-mask:none}
+.dis>div{background:var(--bg2);border-radius:20px;padding:30px}
+.banner{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;border:1px solid var(--amber);background:color-mix(in srgb,var(--amber) 10%,transparent);margin-bottom:24px}
+.banner svg{flex:none;width:26px;height:26px;color:var(--amber)}.banner b{display:block;margin-bottom:2px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.cols h3{margin:0 0 6px;font-size:1.05rem;color:var(--amber)}.cols p{margin:0;color:var(--dim);font-size:14.5px}
+.author{margin-top:30px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--line)}
+.av{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.2rem;color:#04141a;background:linear-gradient(135deg,var(--teal),var(--amber))}
+.author small{display:block;color:var(--dim);font-size:12px;letter-spacing:.12em;text-transform:uppercase}.author b{font-size:1.15rem}
+.author .btn{margin-left:auto}
+footer{padding:30px 0 44px;color:var(--dim);font-size:13px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.rv{opacity:1;transform:none}}
+</style>
+<meta name="robots" content="noindex, noarchive, nosnippet">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<style id="__cp-style-cpq7ihw7">
+  html, body, * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  body.__cp-locked > * { filter: blur(10px); pointer-events: none; }
+  #__cp-lockmsg-cpq7ihw7 {
+    position: fixed; inset: 0; z-index: 2147483647;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 24px; font-family: sans-serif; font-size: 15px;
+    color: #333; background: rgba(255,255,255,0.4);
+  }
+
+  @media print {
+    body > * { display: none !important; }
+    body::before {
+      content: "This page is not available for printing.";
+      display: block;
+      padding: 60px 20px;
+      font-family: sans-serif;
+      text-align: center;
+    }
+  }
+
+  body.__cp-blurred > * {
+    filter: blur(10px);
+    transition: filter 0.15s ease;
+  }
+
+  body.__cp-interact-wait > * { filter: blur(6px); pointer-events: none; }
+  #__cp-interact-cpq7ihw7 {
+    position: fixed; inset: 0; z-index: 2147483647;
+    display: flex; align-items: center; justify-content: center;
+    font-family: sans-serif; font-size: 15px; text-align: center; padding: 24px;
+    color: #333; background: rgba(255,255,255,0.5);
+  }
+
+  .__cp-decoy-cpq7ihw7 {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    left: -9999px;
+  }
+</style>
+<script id="__cp-script-cpq7ihw7">
+eval(atob("KGZ1bmN0aW9uICgpIHsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJjb3B5IiwgZnVuY3Rpb24gKGUpIHsgZS5wcmV2ZW50RGVmYXVsdCgpOyB9KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiY3V0IiwgZnVuY3Rpb24gKGUpIHsgZS5wcmV2ZW50RGVmYXVsdCgpOyB9KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiZHJhZ3N0YXJ0IiwgZnVuY3Rpb24gKGUpIHsKICAgIGlmICh3aW5kb3cuZ2V0U2VsZWN0aW9uICYmIFN0cmluZyh3aW5kb3cuZ2V0U2VsZWN0aW9uKCkpLmxlbmd0aCA+IDApIGUucHJldmVudERlZmF1bHQoKTsKICB9KTsKCiAgaWYgKHdpbmRvdy50b3AgIT09IHdpbmRvdy5zZWxmKSB7CiAgICB0cnkgeyB3aW5kb3cudG9wLmxvY2F0aW9uID0gd2luZG93LnNlbGYubG9jYXRpb24uaHJlZjsgfSBjYXRjaCAoZSkge30KICB9CgogIChmdW5jdGlvbiAoKSB7CiAgICB2YXIgYXR0ZW1wdHMgPSAwLCBsb2NrZWQgPSBmYWxzZSwgcmVzZXRUaW1lciA9IG51bGw7CiAgICBmdW5jdGlvbiB0cmlwKCkgewogICAgICBhdHRlbXB0cysrOwogICAgICBjbGVhclRpbWVvdXQocmVzZXRUaW1lcik7CiAgICAgIHJlc2V0VGltZXIgPSBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgYXR0ZW1wdHMgPSAwOyB9LCA0MDAwKTsKICAgICAgaWYgKGF0dGVtcHRzID49IDUgJiYgIWxvY2tlZCkgewogICAgICAgIGxvY2tlZCA9IHRydWU7CiAgICAgICAgZG9jdW1lbnQuYm9keS5jbGFzc0xpc3QuYWRkKCJfX2NwLWxvY2tlZCIpOwogICAgICAgIHZhciBtc2cgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTsKICAgICAgICBtc2cuaWQgPSAiX19jcC1sb2NrbXNnLWNwcTdpaHc3IjsKICAgICAgICBtc2cudGV4dENvbnRlbnQgPSAiVG9vIG1hbnkgY29weSBhdHRlbXB0cyDigJQgcGxlYXNlIHdhaXQgYSBtb21lbnQuIjsKICAgICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKG1zZyk7CiAgICAgICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7CiAgICAgICAgICBkb2N1bWVudC5ib2R5LmNsYXNzTGlzdC5yZW1vdmUoIl9fY3AtbG9ja2VkIik7CiAgICAgICAgICBpZiAobXNnLnBhcmVudE5vZGUpIG1zZy5wYXJlbnROb2RlLnJlbW92ZUNoaWxkKG1zZyk7CiAgICAgICAgICBhdHRlbXB0cyA9IDA7IGxvY2tlZCA9IGZhbHNlOwogICAgICAgIH0sIDgwMDApOwogICAgICB9CiAgICB9CiAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJjb3B5IiwgdHJpcCk7CiAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJjdXQiLCB0cmlwKTsKICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoImNvbnRleHRtZW51IiwgdHJpcCk7CiAgfSkoKTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigia2V5ZG93biIsIGZ1bmN0aW9uIChlKSB7CiAgICB2YXIgayA9IGUua2V5ID8gZS5rZXkudG9Mb3dlckNhc2UoKSA6ICIiOwogICAgdmFyIGNvbWJvID0gZS5jdHJsS2V5IHx8IGUubWV0YUtleTsKICAgIHZhciBibG9ja2VkID0gKGNvbWJvICYmIFsiYSIsImMiLCJ4IiwicyIsInUiLCJwIl0uaW5kZXhPZihrKSAhPT0gLTEpIHx8CiAgICAgIGUua2V5ID09PSAiRjEyIiB8fAogICAgICAoZS5jdHJsS2V5ICYmIGUuc2hpZnRLZXkgJiYgayA9PT0gInUiKSB8fAogICAgICAoY29tYm8gJiYgZS5zaGlmdEtleSAmJiBbImkiLCJqIiwiYyJdLmluZGV4T2YoaykgIT09IC0xKTsKICAgIGlmIChibG9ja2VkKSBlLnByZXZlbnREZWZhdWx0KCk7CiAgfSk7CgogIChmdW5jdGlvbiAoKSB7CiAgICB2YXIgaWRsZU1zID0gMzAwMDAwOwogICAgdmFyIHRpbWVyID0gbnVsbDsKICAgIGZ1bmN0aW9uIHJlc2V0SWRsZSgpIHsKICAgICAgZG9jdW1lbnQuYm9keS5jbGFzc0xpc3QucmVtb3ZlKCJfX2NwLWJsdXJyZWQiKTsKICAgICAgY2xlYXJUaW1lb3V0KHRpbWVyKTsKICAgICAgdGltZXIgPSBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgZG9jdW1lbnQuYm9keS5jbGFzc0xpc3QuYWRkKCJfX2NwLWJsdXJyZWQiKTsgfSwgaWRsZU1zKTsKICAgIH0KICAgIFsibW91c2Vtb3ZlIiwgIm1vdXNlZG93biIsICJrZXlkb3duIiwgInRvdWNoc3RhcnQiLCAic2Nyb2xsIl0uZm9yRWFjaChmdW5jdGlvbiAoZXYpIHsKICAgICAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcihldiwgcmVzZXRJZGxlKTsKICAgIH0pOwogICAgcmVzZXRJZGxlKCk7CiAgfSkoKTsKCiAgKGZ1bmN0aW9uICgpIHsKICAgIHZhciB0aHJlc2hvbGQgPSAxNjA7CiAgICBzZXRJbnRlcnZhbChmdW5jdGlvbiAoKSB7CiAgICAgIHZhciB3R2FwID0gd2luZG93Lm91dGVyV2lkdGggLSB3aW5kb3cuaW5uZXJXaWR0aCA+IHRocmVzaG9sZDsKICAgICAgdmFyIGhHYXAgPSB3aW5kb3cub3V0ZXJIZWlnaHQgLSB3aW5kb3cuaW5uZXJIZWlnaHQgPiB0aHJlc2hvbGQ7CiAgICAgIGRvY3VtZW50LmJvZHkuY2xhc3NMaXN0LnRvZ2dsZSgiX19jcC1ibHVycmVkIiwgd0dhcCB8fCBoR2FwKTsKICAgIH0sIDgwMCk7CiAgfSkoKTsKCiAgKGZ1bmN0aW9uICgpIHsKICAgIHZhciB0aHJlc2hvbGQgPSAxMDA7CiAgICBzZXRJbnRlcnZhbChmdW5jdGlvbiAoKSB7CiAgICAgIHZhciBzdGFydCA9IHBlcmZvcm1hbmNlLm5vdygpOwogICAgICBkZWJ1Z2dlcjsKICAgICAgdmFyIGR1cmF0aW9uID0gcGVyZm9ybWFuY2Uubm93KCkgLSBzdGFydDsKICAgICAgZG9jdW1lbnQuYm9keS5jbGFzc0xpc3QudG9nZ2xlKCJfX2NwLWJsdXJyZWQiLCBkdXJhdGlvbiA+IHRocmVzaG9sZCk7CiAgICB9LCAxMDAwKTsKICB9KSgpOwoKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJrZXl1cCIsIGZ1bmN0aW9uIChlKSB7CiAgICBpZiAoZS5rZXkgIT09ICJQcmludFNjcmVlbiIpIHJldHVybjsKICAgIGRvY3VtZW50LmJvZHkuY2xhc3NMaXN0LmFkZCgiX19jcC1ibHVycmVkIik7CiAgICBpZiAobmF2aWdhdG9yLmNsaXBib2FyZCAmJiBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCkgewogICAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCgiIikuY2F0Y2goZnVuY3Rpb24gKCkge30pOwogICAgfQogICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7IGRvY3VtZW50LmJvZHkuY2xhc3NMaXN0LnJlbW92ZSgiX19jcC1ibHVycmVkIik7IH0sIDQwMDApOwogIH0pOwoKICAoZnVuY3Rpb24gKCkgewogICAgZnVuY3Rpb24gcmV2ZWFsKCkgewogICAgICBkb2N1bWVudC5ib2R5LmNsYXNzTGlzdC5yZW1vdmUoIl9fY3AtaW50ZXJhY3Qtd2FpdCIpOwogICAgICB2YXIgZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiX19jcC1pbnRlcmFjdC1jcHE3aWh3NyIpOwogICAgICBpZiAoZWwgJiYgZWwucGFyZW50Tm9kZSkgZWwucGFyZW50Tm9kZS5yZW1vdmVDaGlsZChlbCk7CiAgICB9CiAgICBmdW5jdGlvbiBpbml0KCkgewogICAgICBkb2N1bWVudC5ib2R5LmNsYXNzTGlzdC5hZGQoIl9fY3AtaW50ZXJhY3Qtd2FpdCIpOwogICAgICB2YXIgbXNnID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7CiAgICAgIG1zZy5pZCA9ICJfX2NwLWludGVyYWN0LWNwcTdpaHc3IjsKICAgICAgbXNnLnRleHRDb250ZW50ID0gIk1vdmUgeW91ciBtb3VzZSBvciB0YXAgdG8gY29udGludWUuIjsKICAgICAgZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZChtc2cpOwogICAgICBbIm1vdXNlbW92ZSIsICJ0b3VjaHN0YXJ0IiwgImtleWRvd24iLCAic2Nyb2xsIiwgInBvaW50ZXJkb3duIl0uZm9yRWFjaChmdW5jdGlvbiAoZXYpIHsKICAgICAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKGV2LCByZXZlYWwsIHsgb25jZTogdHJ1ZSB9KTsKICAgICAgfSk7CiAgICB9CiAgICBpZiAoZG9jdW1lbnQuYm9keSkgaW5pdCgpOwogICAgZWxzZSBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCJET01Db250ZW50TG9hZGVkIiwgaW5pdCk7CiAgfSkoKTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiRE9NQ29udGVudExvYWRlZCIsIGZ1bmN0aW9uICgpIHsKICAgIHZhciBzcmNJZCA9ICJtcmIiOwogICAgdmFyIGJpdHMgPSAiIjsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgc3JjSWQubGVuZ3RoOyBpKyspIHsgYml0cyArPSBzcmNJZC5jaGFyQ29kZUF0KGkpLnRvU3RyaW5nKDIpLnBhZFN0YXJ0KDgsICIwIik7IH0KICAgIHZhciBtYXJrID0gYml0cy5zcGxpdCgiIikubWFwKGZ1bmN0aW9uIChiKSB7IHJldHVybiBiID09PSAiMSIgPyAiXHUyMDBDIiA6ICJcdTIwMEIiOyB9KS5qb2luKCIiKSArICJcdTIwNjAiOwogICAgdmFyIHdhbGtlciA9IGRvY3VtZW50LmNyZWF0ZVRyZWVXYWxrZXIoZG9jdW1lbnQuYm9keSwgTm9kZUZpbHRlci5TSE9XX1RFWFQsIG51bGwpOwogICAgdmFyIG5vZGUsIG5vZGVzID0gW10sIGNvdW50ID0gMDsKICAgIHdoaWxlICgobm9kZSA9IHdhbGtlci5uZXh0Tm9kZSgpKSkgbm9kZXMucHVzaChub2RlKTsKICAgIG5vZGVzLmZvckVhY2goZnVuY3Rpb24gKG4pIHsKICAgICAgaWYgKCFuLm5vZGVWYWx1ZSB8fCAhbi5ub2RlVmFsdWUudHJpbSgpKSByZXR1cm47CiAgICAgIHZhciBwID0gbi5wYXJlbnRFbGVtZW50OwogICAgICBpZiAocCAmJiBwLmNsb3Nlc3QgJiYgcC5jbG9zZXN0KCJzY3JpcHQsIHN0eWxlLCBbZGF0YS1wcm90ZWN0ZWRdIikpIHJldHVybjsKICAgICAgY291bnQrKzsKICAgICAgaWYgKGNvdW50ICUgNiA9PT0gMCkgbi5ub2RlVmFsdWUgPSBuLm5vZGVWYWx1ZSArIG1hcms7CiAgICB9KTsKICB9KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiRE9NQ29udGVudExvYWRlZCIsIGZ1bmN0aW9uICgpIHsKICAgIHZhciB0YXJnZXRzID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgicCwgbGksIGJsb2NrcXVvdGUsIHRkIik7CiAgICB2YXIgbWFkZSA9IDA7CiAgICB0YXJnZXRzLmZvckVhY2goZnVuY3Rpb24gKGVsKSB7CiAgICAgIGlmIChtYWRlID49IDQwKSByZXR1cm47CiAgICAgIGlmIChlbC5jbG9zZXN0ICYmIGVsLmNsb3Nlc3QoIltkYXRhLXByb3RlY3RlZF0iKSkgcmV0dXJuOwogICAgICB2YXIgdGV4dCA9IChlbC50ZXh0Q29udGVudCB8fCAiIikudHJpbSgpOwogICAgICBpZiAodGV4dC5sZW5ndGggPCAyMCkgcmV0dXJuOwogICAgICB2YXIgd29yZHMgPSB0ZXh0LnNwbGl0KC9ccysvKTsKICAgICAgZm9yICh2YXIgaSA9IHdvcmRzLmxlbmd0aCAtIDE7IGkgPiAwOyBpLS0pIHsKICAgICAgICB2YXIgaiA9IE1hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIChpICsgMSkpOwogICAgICAgIHZhciB0bXAgPSB3b3Jkc1tpXTsgd29yZHNbaV0gPSB3b3Jkc1tqXTsgd29yZHNbal0gPSB0bXA7CiAgICAgIH0KICAgICAgdmFyIGRlY295ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic3BhbiIpOwogICAgICBkZWNveS5jbGFzc05hbWUgPSAiX19jcC1kZWNveS1jcHE3aWh3NyI7CiAgICAgIGRlY295LnNldEF0dHJpYnV0ZSgiYXJpYS1oaWRkZW4iLCAidHJ1ZSIpOwogICAgICBkZWNveS50ZXh0Q29udGVudCA9ICIgIiArIHdvcmRzLmpvaW4oIiAiKTsKICAgICAgZWwuYXBwZW5kQ2hpbGQoZGVjb3kpOwogICAgICBtYWRlKys7CiAgICB9KTsKICB9KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigiRE9NQ29udGVudExvYWRlZCIsIGZ1bmN0aW9uICgpIHsKICAgIHZhciB3YWxrZXIgPSBkb2N1bWVudC5jcmVhdGVUcmVlV2Fsa2VyKGRvY3VtZW50LmJvZHksIE5vZGVGaWx0ZXIuU0hPV19URVhULCBudWxsKTsKICAgIHZhciBub2RlLCBub2RlcyA9IFtdOwogICAgd2hpbGUgKChub2RlID0gd2Fsa2VyLm5leHROb2RlKCkpKSBub2Rlcy5wdXNoKG5vZGUpOwogICAgbm9kZXMuZm9yRWFjaChmdW5jdGlvbiAobikgewogICAgICB2YXIgdGV4dCA9IG4ubm9kZVZhbHVlOwogICAgICBpZiAoIXRleHQgfHwgIXRleHQudHJpbSgpKSByZXR1cm47CiAgICAgIHZhciBwID0gbi5wYXJlbnRFbGVtZW50OwogICAgICBpZiAoIXAgfHwgKHAuY2xvc2VzdCAmJiBwLmNsb3Nlc3QoInNjcmlwdCwgc3R5bGUsIFtkYXRhLXByb3RlY3RlZF0iKSkpIHJldHVybjsKICAgICAgdmFyIHNwYW4gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJzcGFuIik7CiAgICAgIHNwYW4uc3R5bGUudW5pY29kZUJpZGkgPSAiYmlkaS1vdmVycmlkZSI7CiAgICAgIHNwYW4uc3R5bGUuZGlyZWN0aW9uID0gInJ0bCI7CiAgICAgIHNwYW4udGV4dENvbnRlbnQgPSB0ZXh0LnNwbGl0KCIiKS5yZXZlcnNlKCkuam9pbigiIik7CiAgICAgIHAucmVwbGFjZUNoaWxkKHNwYW4sIG4pOwogICAgfSk7CiAgfSk7CgogIGRvY3VtZW50LmRvY3VtZW50RWxlbWVudC5zZXRBdHRyaWJ1dGUoInRyYW5zbGF0ZSIsICJubyIpOwogIGRvY3VtZW50LmRvY3VtZW50RWxlbWVudC5jbGFzc0xpc3QuYWRkKCJub3RyYW5zbGF0ZSIpOwoKICAoZnVuY3Rpb24gKCkgewogICAgdmFyIHVhID0gbmF2aWdhdG9yLnVzZXJBZ2VudCB8fCAiIjsKICAgIHZhciBsb29rc0F1dG9tYXRlZCA9IG5hdmlnYXRvci53ZWJkcml2ZXIgPT09IHRydWUgfHwKICAgICAgL0hlYWRsZXNzQ2hyb21lfFB1cHBldGVlcnxQbGF5d3JpZ2h0fFBoYW50b21KU3xTZWxlbml1bS9pLnRlc3QodWEpIHx8CiAgICAgICh3aW5kb3cuY2FsbFBoYW50b20gIT09IHVuZGVmaW5lZCkgfHwgKHdpbmRvdy5fcGhhbnRvbSAhPT0gdW5kZWZpbmVkKTsKICAgIGlmIChsb29rc0F1dG9tYXRlZCkgewogICAgICBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQuc3R5bGUudmlzaWJpbGl0eSA9ICJoaWRkZW4iOwogICAgICBkb2N1bWVudC50aXRsZSA9ICIiOwogICAgfQogIH0pKCk7CgogIChmdW5jdGlvbiAoKSB7CiAgICB2YXIgYmlnID0gImNvbG9yOiNlMDdhNWY7IGZvbnQtc2l6ZTozNnB4OyBmb250LXdlaWdodDpib2xkOyI7CiAgICB2YXIgc21hbGwgPSAiY29sb3I6IzlhYTg5ZjsgZm9udC1zaXplOjE0cHg7IjsKICAgIGNvbnNvbGUubG9nKCIlY1N0b3AhIiwgYmlnKTsKICAgIGNvbnNvbGUubG9nKCIlY1RoaXMgaXMgYSBicm93c2VyIGZlYXR1cmUgaW50ZW5kZWQgZm9yIGRldmVsb3BlcnMuIFBhc3Rpbmcgb3IgcnVubmluZyBjb2RlIGhlcmUgdGhhdCBzb21lb25lIGVsc2UgdG9sZCB5b3UgdG8gY291bGQgbGV0IHRoZW0gYWNjZXNzIHRoaXMgcGFnZSBvciB5b3VyIGFjY291bnQuIiwgc21hbGwpOwogIH0pKCk7CgogIChmdW5jdGlvbiAoKSB7CiAgICB2YXIgcHJvdGVjdGVkU3R5bGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiX19jcC1zdHlsZS1jcHE3aWh3NyIpOwogICAgdmFyIG9ic2VydmVyID0gbmV3IE11dGF0aW9uT2JzZXJ2ZXIoZnVuY3Rpb24gKCkgewogICAgICBpZiAocHJvdGVjdGVkU3R5bGUgJiYgIWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJfX2NwLXN0eWxlLWNwcTdpaHc3IikpIHsKICAgICAgICBkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKHByb3RlY3RlZFN0eWxlKTsKICAgICAgfQogICAgfSk7CiAgICBvYnNlcnZlci5vYnNlcnZlKGRvY3VtZW50LmRvY3VtZW50RWxlbWVudCwgeyBjaGlsZExpc3Q6IHRydWUsIHN1YnRyZWU6IHRydWUgfSk7CiAgfSkoKTsKfSkoKTs="));
+</script>
+</head>
+<body>
+<nav><div class="wrap">
+ <a class="logo" href="#top" aria-label="Simulation Lab home"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h5l3-9 5 17 4-12 2 4h9" style="stroke:var(--teal)"/><circle cx="16" cy="16" r="14" style="stroke:var(--line)"/></svg>Simulation&nbsp;Lab</a>
+ <div class="links"><a class="keep" href="#sims">Simulations</a><a href="#about">About</a><a class="keep" href="#legal">Disclaimer</a>
+  <button class="ib" id="theme" aria-label="Toggle light / dark theme" title="Toggle theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button></div>
+</div></nav>
+
+<header class="hero" id="top">
+ <canvas id="bg" aria-hidden="true"></canvas>
+ <div class="wrap">
+  <span class="eyebrow"><i></i>Interactive engineering &amp; physics simulations</span>
+  <h1>See how structures, waves and forces <em>really behave.</em></h1>
+  <p class="lead">Real numerical solvers running entirely in your browser — no install, no server. Shake a building, add bracing and dampers, and watch where the energy goes.</p>
+  <div class="cta">
+   <a class="btn pri" id="launch" href="earthquake-lab.html" target="_blank" rel="noopener">Launch Earthquake Lab <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+   <a class="btn" href="#sims">Browse simulations</a>
+  </div>
+  <div class="stats">
+   <div><b data-count="1">0</b><span>live simulation</span></div>
+   <div><b data-count="8">0</b><span>linked modules in the lab</span></div>
+   <div><b data-count="20">0</b><span>solver self-checks</span></div>
+   <div><b data-count="0">0</b><span>servers – runs locally</span></div>
+  </div>
+ </div>
+ <div class="hint">Scroll</div>
+</header>
+
+<section id="sims"><div class="wrap">
+ <div class="sh rv"><div><h2>Simulations</h2><p class="sub">Each simulation opens in its own browser tab. Greyed-out boxes are on the roadmap and will light up as they are added.</p></div>
+  <div class="chips" role="group" aria-label="Filter simulations"><button class="chip" data-f="all" aria-pressed="true">All</button><button class="chip" data-f="live" aria-pressed="false">Live</button><button class="chip" data-f="soon" aria-pressed="false">Coming soon</button></div></div>
+ <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="about"><div class="wrap">
+ <div class="sh rv"><div><h2>Built to teach, built to be checked</h2><p class="sub">The goal is understanding, so every result can be inspected and verified.</p></div></div>
+ <div class="feat">
+  <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg><h3>Real solvers</h3><p>Newmark-β time integration with Newton iteration, bilinear hysteresis, P–Δ effects and vertical collapse – not a canned animation.</p></div>
+  <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><h3>Self-verifying</h3><p>Energy balance, analytic benchmarks and convergence tests run against the solver, and the Energy panel shows where every joule goes.</p></div>
+  <div class="f rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><h3>Runs in your browser</h3><p>One HTML file per simulation, computed locally, with WebGPU 3D where your browser supports it.</p></div>
+ </div>
+</div></section>
+
+<section id="legal"><div class="wrap">
+ <div class="sh rv"><div><h2>Disclaimer &amp; legal usage</h2><p class="sub">Please read before using any simulation on this site.</p></div></div>
+ <div class="dis rv"><div>
+  <div class="banner" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3zM12 10v5M12 18h.01"/></svg><div><b>For educational purposes only – not for production scenarios.</b>These simulations are teaching tools. They must not be used for structural design, safety-critical decisions, engineering sign-off, regulatory submissions or any real-world production use.</div></div>
+  <div class="cols">
+   <div><h3>Educational use</h3><p>Models are deliberately simplified (for example one lateral degree of freedom per floor, no torsion, illustrative costs and soil/material libraries). Results show qualitative behaviour and are not validated against codes, tests or site-specific data.</p></div>
+   <div><h3>No warranty, no liability</h3><p>All content is provided “as is” and “as available”, without warranty of any kind, express or implied, including accuracy, completeness or fitness for a particular purpose. The author accepts no liability for any loss, damage or decision arising from its use. Consult a qualified, licensed professional for real projects.</p></div>
+   <div><h3>Copyright</h3><p>© 2026 Mohammad Reza Boroumand. All rights reserved unless otherwise stated. You may view and run the simulations for personal learning. Copying, redistributing, hosting, modifying or commercial use of the source or content requires prior written permission from the author.</p></div>
+   <div><h3>Trademarks &amp; third parties</h3><p>Product, standard and organisation names mentioned belong to their respective owners and are used for identification only, with no affiliation or endorsement implied. Any third-party libraries or data keep their own licences.</p></div>
+  </div>
+  <div class="author">
+   <div class="av" aria-hidden="true">MB</div>
+   <div><small>Author</small><b>Mohammad Reza Boroumand</b></div>
+   <a class="btn" href="https://www.linkedin.com/in/mohammad-reza-boroumand-047a6353/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3V9.75zM9.5 9.75h3.8v1.6h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-4.9c0-1.17-.02-2.67-1.63-2.67-1.63 0-1.88 1.27-1.88 2.58V21h-4V9.75z"/></svg>LinkedIn profile</a>
+  </div>
+ </div></div>
+</div></section>
+
+<footer><div class="wrap"><span>© 2026 Mohammad Reza Boroumand · Educational use only</span><span>Not for production, design or safety-critical use.</span></div></footer>
+
+<script>
+/* ---------- Simulation catalogue ----------
+   To add a simulation: add an entry. status:'live' needs an href (opens in a new tab); status:'soon' renders as a grey box. */
+const SIMS=[
+ {status:'live',big:true,title:'Earthquake Lab',href:'earthquake-lab.html',tag:'Live · structural dynamics',desc:'Shake a multi-storey building with real time-history analysis. Add bracing, viscous dampers, a tuned mass damper or base isolation, track energy, and take on the 2 % drift challenge.',mods:['Earthquake','Wind & Storm CFD','Waves & Tsunami','Blast','Structural Analysis','3D Structure FEM','Energy panel','Challenge mode']},
+ {status:'soon',title:'Ballistic Impact Lab',desc:'Penetration of plate stacks and projectile construction.'},
+ {status:'soon',title:'Particle Universe',desc:'GPU particle physics with many simulation modes.'},
+ {status:'soon',title:'Particle Reactor',desc:'Audio-reactive visual physics.'},
+ {status:'soon',title:'Chart & Graph Lab',desc:'A catalogue of charting libraries and data-visualisation demos.'},
+ {status:'soon',title:'Next simulation',desc:'Reserved for the next box added to the lab.'}
+];
+const $=s=>document.querySelector(s),LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const grid=$('#grid');
+SIMS.forEach(s=>{const live=s.status=='live',el=document.createElement(live?'a':'div');el.className='card rv '+(live?'live':'soon')+(s.big?' big':'');el.dataset.s=s.status;
+ if(live){el.href=s.href;el.target='_blank';el.rel='noopener';el.setAttribute('aria-label','Open '+s.title+' in a new tab')}else{el.setAttribute('aria-disabled','true');el.title='Coming soon'}
+ el.innerHTML=(live?'<div class="viz"><canvas></canvas></div>':'<div class="viz">'+LOCK+'</div>')+'<div class="body"><span class="tag">'+(live?s.tag:'Coming soon')+'</span><h3>'+s.title+'</h3><p>'+s.desc+'</p>'+(s.mods?'<div class="mods">'+s.mods.map(m=>'<span>'+m+'</span>').join('')+'</div>':'')+(live?'<span class="go">Open in new tab '+ARROW+'</span>':'')+'</div>';
+ grid.append(el)});
+{const a=document.createElement('div');a.className='card soon add rv';a.innerHTML='<b>+</b><span>More simulations will appear here</span>';grid.append(a)}
+/* filter */
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x==c));const f=c.dataset.f;grid.querySelectorAll('.card').forEach(k=>k.classList.toggle('hide',f!='all'&&k.dataset.s!=f&&!(f=='soon'&&k.classList.contains('add'))))});
+/* theme */
+{const r=document.documentElement;try{const t=localStorage.getItem('sl-theme');if(t)r.dataset.theme=t}catch(e){}
+ $('#theme').onclick=()=>{const dark=(r.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'))=='dark',n=dark?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('sl-theme',n)}catch(e){}}}
+/* scroll reveal + counters */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(()=>t.style.transitionDelay='',1000)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach((e,i)=>{e.style.transitionDelay=Math.min(i%6,5)*60+'ms';io.observe(e)});
+document.querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count;if(RM||!to){el.textContent=to;return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1400);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)});
+/* card tilt + spotlight */
+document.querySelectorAll('.card.live').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;c.style.setProperty('--mx',x*100+'%');c.style.setProperty('--my',y*100+'%');if(!RM&&e.pointerType=='mouse')c.style.transform='perspective(900px) rotateX('+((.5-y)*6)+'deg) rotateY('+((x-.5)*8)+'deg) translateY(-4px)'});c.addEventListener('pointerleave',()=>c.style.transform='')});
+/* ---------- hero background: seismic waves + particle field, reacts to pointer, click = shockwave ---------- */
+(()=>{const cv=$('#bg'),x=cv.getContext('2d');let W,H,D,P=[],ring=[],mx=-999,my=-999,en=.25,vis=true,t0=0;
+ const col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+ function size(){D=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;x.setTransform(D,0,0,D,0,0);const n=Math.round(Math.min(90,W*H/14000));P=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.6+.6}))}
+ addEventListener('resize',size);size();
+ const hero=$('#top');hero.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;en=Math.min(1.2,en+.02)});hero.addEventListener('pointerleave',()=>{mx=my=-999});
+ hero.addEventListener('pointerdown',e=>{if(e.target.closest('a,button'))return;const r=cv.getBoundingClientRect();ring.push({x:e.clientX-r.left,y:e.clientY-r.top,r:0});en=1.3});
+ new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(hero);
+ function frame(t){requestAnimationFrame(frame);if(!vis||document.hidden)return;const teal=col('--teal'),amber=col('--amber'),vio=col('--violet'),line=col('--line');x.clearRect(0,0,W,H);en*=.992;en=Math.max(en,.22);const s=RM?0:t/1000;
+  /* waves */
+  [[teal,.5,1,1],[amber,.6,1.7,.8],[vio,.7,2.6,.7]].forEach(([c,y0,f,a],k)=>{x.strokeStyle=c;x.globalAlpha=a*.8;x.lineWidth=2.2;x.beginPath();for(let i=0;i<=W;i+=6){const u=i/W,env=Math.exp(-Math.pow((u-.5-.18*Math.sin(s*.15+k))*2.2,2)),yy=H*y0+Math.sin(u*9*f+s*(1.2+k*.5))*26*en*(.4+env)+Math.sin(u*23*f-s*2.3)*9*en*env+Math.sin(u*4+s*.3)*14;i?x.lineTo(i,yy):x.moveTo(i,yy)}x.stroke()});x.globalAlpha=1;
+  /* particles */
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;const dx=p.x-mx,dy=p.y-my,d=Math.hypot(dx,dy);if(d<130){const f=(130-d)/130*.9;p.x+=dx/d*f;p.y+=dy/d*f}x.fillStyle=teal;x.globalAlpha=.9;x.beginPath();x.arc(p.x,p.y,p.r+.4,0,6.283);x.fill()}
+  x.lineWidth=1;for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<110){x.globalAlpha=(1-d/110)*.45;x.strokeStyle=line;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+  /* pointer halo + shockwaves */
+  if(mx>0){const g=x.createRadialGradient(mx,my,0,mx,my,160);g.addColorStop(0,col('--glow'));g.addColorStop(1,'transparent');x.globalAlpha=1;x.fillStyle=g;x.fillRect(mx-160,my-160,320,320)}
+  ring=ring.filter(r=>r.r<Math.max(W,H));for(const r of ring){r.r+=7;x.globalAlpha=Math.max(0,1-r.r/700);x.strokeStyle=amber;x.lineWidth=2;x.beginPath();x.arc(r.x,r.y,r.r,0,6.283);x.stroke();for(const p of P){const d=Math.hypot(p.x-r.x,p.y-r.y);if(Math.abs(d-r.r)<10){p.x+=(p.x-r.x)/d*2;p.y+=(p.y-r.y)/d*2}}}x.globalAlpha=1}
+ requestAnimationFrame(frame)})();
+/* ---------- live card: scrolling seismogram driving a shaking building ---------- */
+document.querySelectorAll('.card.live canvas').forEach(cv=>{const x=cv.getContext('2d');let W,H,vis=true;const col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+ const size=()=>{const D=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;x.setTransform(D,0,0,D,0,0)};size();addEventListener('resize',size);
+ new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(cv);
+ const g=t=>{const c=(t%9)/9,env=c<.12?c/.12:Math.exp(-(c-.12)*3.2);let a=0;for(const f of[.9,1.7,2.9,4.3])a+=Math.sin(t*f*6.28+f*3)/f;return a*env*.55};
+ function fr(ms){requestAnimationFrame(fr);if(!vis||document.hidden)return;const t=RM?2.2:ms/1000,teal=col('--teal'),amber=col('--amber'),line=col('--line');x.clearRect(0,0,W,H);
+  const bx=W*.2,gy=H-36;/* seismogram */
+  x.strokeStyle=line;x.lineWidth=1;x.beginPath();x.moveTo(0,gy);x.lineTo(W,gy);x.stroke();x.strokeStyle=amber;x.lineWidth=1.6;x.beginPath();for(let i=0;i<=W-bx*1.5;i+=2){const u=t-(i)/60,y=gy-Math.tanh(g(u)*.8)*(H*.2)-3;i?x.lineTo(bx*1.5+i,y):x.moveTo(bx*1.5,y)}x.stroke();
+  /* building: 6 floors, mode-1 shape */
+  const now=g(t),n=6,fh=(H-46)/n,bw=Math.min(54,W*.2);x.lineWidth=2;x.strokeStyle=teal;x.fillStyle=col('--teal');
+  let px=bx,py=gy;for(let j=1;j<=n;j++){const dx=now*(j/n)**1.3*22,cx=bx+dx,cy=gy-j*fh;x.globalAlpha=.9;x.beginPath();x.moveTo(px-bw/2,py);x.lineTo(cx-bw/2,cy);x.moveTo(px+bw/2,py);x.lineTo(cx+bw/2,cy);x.stroke();x.globalAlpha=.35;x.fillRect(cx-bw/2,cy-3,bw,4);px=cx;py=cy}x.globalAlpha=1;
+  x.fillStyle=line;x.fillRect(bx-bw,gy,bw*2,3)}
+ requestAnimationFrame(fr)});
+</script>
+</body>
+</html>
